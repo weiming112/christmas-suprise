@@ -1,21 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Just for you</title>
-
-  <!-- Apple-like font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -24,9 +17,12 @@
       color: white;
       overflow-y: scroll;
       scroll-snap-type: y mandatory;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     section {
+      position: relative;
       min-height: 100vh;
       padding: 60px 24px;
       display: flex;
@@ -60,13 +56,14 @@
     .hint {
       position: absolute;
       bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 0.9rem;
       opacity: 0.4;
     }
   </style>
 </head>
 <body>
-
   <section>
     <div class="text show">
       Hey 🙂
@@ -76,9 +73,7 @@
   </section>
 
   <section>
-    <div class="text">
-      I didn’t rush this
-    </div>
+    <div class="text">I didn’t rush this</div>
   </section>
 
   <section>
@@ -88,9 +83,7 @@
   </section>
 
   <section>
-    <div class="text">
-      So take your time
-    </div>
+    <div class="text">So take your time</div>
   </section>
 
   <section>
@@ -100,23 +93,15 @@
   </section>
 
   <script>
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('show');
-          }
-        });
-      },
-      {
-        threshold: 0.6
-      }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.6 });
 
-    document.querySelectorAll('.text').forEach(el => {
-      observer.observe(el);
-    });
+    document.querySelectorAll('.text').forEach(el => observer.observe(el));
   </script>
-
 </body>
 </html>
