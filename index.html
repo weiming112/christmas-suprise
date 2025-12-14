@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scrolling Christmas Surprise</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
   * {
@@ -47,12 +45,6 @@
     scroll-snap-align: start;
     scroll-snap-stop: always;
     overflow: hidden; /* Prevents overflow from animations */
-  }
-
-  /* Provide semantic heading styles */
-  h1, h2 {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
   }
 
   .text {
@@ -120,10 +112,10 @@
     height: 100%;
     display: block;
     /* Important: allows scrolling on mobile UNLESS touching tree directly */
-    touch-action: pan-y;
+    touch-action: pan-y; 
   }
 
-  /* Custom Cursor - centered via transform */
+  /* Custom Cursor */
   .cursor {
     width: 20px;
     height: 20px;
@@ -131,10 +123,7 @@
     pointer-events: none;
     z-index: 9999;
     mix-blend-mode: difference;
-    transition: transform 0.12s;
-    left: 0;
-    top: 0;
-    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.1s;
   }
 
   .cursor::after {
@@ -148,7 +137,7 @@
     box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
   }
 
-  .cursor.active { transform: translate(-50%, -50%) scale(2.5); }
+  .cursor.active { transform: scale(2.5); }
   
   .final-message::before {
     content: '';
@@ -181,65 +170,50 @@
   @media (hover: none) {
     .cursor { display: none; }
   }
-
-  /* Respect user's reduced motion preference */
-  @media (prefers-reduced-motion: reduce) {
-    html, * {
-      animation: none !important;
-      transition: none !important;
-      scroll-behavior: auto !important;
-    }
-    .text span { transition: none; opacity: 1; transform: none; filter: none; }
-    .emoji-section { transition: none; opacity: 1; transform: none; }
-  }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="customCursor" aria-hidden="true"></div>
-<div class="snow-container" id="snowContainer" aria-hidden="true"></div>
+<div class="cursor"></div>
+<div class="snow-container" id="snowContainer"></div>
 
 <section>
-  <h1 class="text" data-text="Hey"></h1>
+  <div class="text" data-text="Hey"></div>
 </section>
 
 <section>
-  <h2 class="text" data-text="I made this just for you"></h2>
+  <div class="text" data-text="I made this just for you"></div>
 </section>
 
 <section>
-  <div class="text" data-text="Each part appears intentionally |like a little surprise"></div>
+  <div class="text" data-text="Each part appears intentionally|like a little surprise"></div>
 </section>
 
 <section>
-  <div class="emoji-section text" aria-hidden="true">😊</div>
+  <div class="emoji-section text">😊</div>
 </section>
 
 <section>
   <div class="text" data-text="Keep scrolling...|something magical awaits"></div>
 </section>
 
-<section id="treeSection" aria-label="Interactive Christmas tree section">
-  <canvas id="treeCanvas" role="img" aria-label="Interactive Christmas tree; hover or tap to create sparkles"></canvas>
-  <div class="tree-hint">Tap or hover to interact</div>
+<section id="treeSection">
+  <canvas id="treeCanvas"></canvas>
+  <div class="tree-hint">Tap or hover to interact ✨</div>
 </section>
 
 <section class="final-message">
-  <div class="text" data-text="Merry Christmas ❤️||May your holidays sparkle with joy"></div>
+  <div class="text" data-text="Merry Christmas 🎄❤️||May your holidays sparkle with joy"></div>
 </section>
 
 <script>
   // 1. Mobile Detection & Config
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  // You requested to keep the star count at 600
-  const STAR_COUNT = 600;
-
-  // Reduced-motion preference
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const STAR_COUNT = isMobile ? 300 : 600; 
 
   // 2. Text Split & Reveal Logic
   document.querySelectorAll('.text[data-text]').forEach(el => {
-    const text = el.getAttribute('data-text') || '';
+    const text = el.getAttribute('data-text');
     const lines = text.split('|');
     el.innerHTML = '';
     
@@ -251,17 +225,13 @@
         const span = document.createElement('span');
         span.textContent = char === ' ' ? '\u00A0' : char;
         // Stagger delay calculation
-        if (!reduceMotion) {
-          span.style.transitionDelay = `${(lineIndex * 10 + i) * 0.04}s`;
-        } else {
-          span.style.transitionDelay = '0s';
-        }
+        span.style.transitionDelay = `${(lineIndex * 10 + i) * 0.04}s`;
         el.appendChild(span);
       });
     });
   });
 
-  // 3. Scroll Observer
+  // 3. Scroll Observer (REMOVED THE BUGGY SCROLL LOCK)
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -275,10 +245,9 @@
   document.querySelectorAll('.text, .emoji-section').forEach(el => observer.observe(el));
 
   // 4. Custom Cursor
-  const cursor = document.getElementById('customCursor');
+  const cursor = document.querySelector('.cursor');
   let mouseX = -100, mouseY = -100;
   let cursorX = -100, cursorY = -100;
-  let showCursor = !isMobile;
 
   document.addEventListener('mousemove', e => {
     mouseX = e.clientX;
@@ -293,35 +262,23 @@
     cursor.style.top = `${cursorY}px`;
     requestAnimationFrame(updateCursor);
   }
-  if (showCursor) updateCursor();
+  if (!isMobile) updateCursor();
 
   // 5. Canvas Tree Animation
   const canvas = document.getElementById('treeCanvas');
-  const ctx = canvas.getContext('2d'); // keep alpha for CSS background
+  const ctx = canvas.getContext('2d'); // Removed alpha:false to let gradient show
   let stars = [];
   let particles = [];
-  let w = 0, h = 0;
+  let w, h;
   let mouse = { x: -1000, y: -1000 };
 
-  // DPR-aware resize and immediate initialization
   function resize() {
-    const dpr = Math.max(1, window.devicePixelRatio || 1);
-    const cssW = window.innerWidth;
-    const cssH = window.innerHeight;
-    canvas.width = Math.floor(cssW * dpr);
-    canvas.height = Math.floor(cssH * dpr);
-    canvas.style.width = cssW + 'px';
-    canvas.style.height = cssH + 'px';
-    // scale so drawing code can use CSS pixels coordinates
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    w = cssW;
-    h = cssH;
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
     initStars();
   }
   window.addEventListener('resize', resize);
-  // Call resize synchronously before starting animations
-  resize();
+  setTimeout(resize, 100); // Initial call
 
   function initStars() {
     stars = [];
@@ -368,29 +325,24 @@
     mouse.x = x - rect.left;
     mouse.y = y - rect.top;
     
-    if (showCursor) cursor.classList.add('active');
+    cursor.classList.add('active');
     
-    // Create sparkles on movement (throttled and disabled for reduced motion)
-    if (!reduceMotion && particles.length < 200 && Math.random() > 0.8) {
-      createSparkle(mouse.x, mouse.y);
-    }
+    // Create sparkles on movement
+    if(Math.random() > 0.8) createSparkle(mouse.x, mouse.y);
   }
 
   canvas.addEventListener('mousemove', e => handleInput(e.clientX, e.clientY));
   canvas.addEventListener('touchmove', e => {
-    // If you want to block page scroll while touching tree, uncomment the next line.
-    // e.preventDefault();
+    // e.preventDefault(); // Uncomment if you want to block scrolling while touching tree
     handleInput(e.touches[0].clientX, e.touches[0].clientY);
-  }, {passive: true});
+  }, {passive: false});
 
   canvas.addEventListener('mouseleave', () => {
     mouse.x = -1000;
-    if (showCursor) cursor.classList.remove('active');
+    cursor.classList.remove('active');
   });
 
   function createSparkle(x, y) {
-    // Throttle create rate by bounding particle count
-    if (particles.length > 400) return;
     particles.push({
       x, y,
       vx: (Math.random()-0.5) * 4,
@@ -400,128 +352,93 @@
     });
   }
 
-  // Animation loop control
-  let rafId = null;
-  let isAnimating = false;
-
   function animate() {
-    // loop guard (shouldn't start multiple loops)
-    if (rafId !== null) cancelAnimationFrame(rafId);
+    // Clear rect to keep transparency for CSS background
+    ctx.clearRect(0, 0, w, h);
+    
+    const cx = w/2;
+    // Rotate entire tree slowly
+    const time = Date.now() * 0.0005;
 
-    // Use a closure-based loop
-    function loop() {
-      // Clear rect (use CSS pixels)
-      ctx.clearRect(0, 0, w, h);
+    // 1. Draw Sparkles
+    for(let i=particles.length-1; i>=0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.03;
+      if(p.life <= 0) { particles.splice(i, 1); continue; }
       
-      const cx = w / 2;
-      // Rotate tree slowly unless reduced motion
-      const time = reduceMotion ? 0 : Date.now() * 0.0005;
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.life;
+      ctx.arc(p.x, p.y, 2 * p.life, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
 
-      // 1. Draw Sparkles (skip if reduced motion)
-      if (!reduceMotion) {
-        for(let i=particles.length-1; i>=0; i--) {
-          const p = particles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-          p.life -= 0.03;
-          if(p.life <= 0) { particles.splice(i, 1); continue; }
-          
-          ctx.beginPath();
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = p.life;
-          ctx.arc(p.x, p.y, 2 * p.life, 0, Math.PI*2);
-          ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-      }
-
-      // 2. Draw Stars (Pseudo 3D)
-      for (let si = 0; si < stars.length; si++) {
-        const star = stars[si];
-        if (star.isTop) {
-          ctx.save();
-          ctx.shadowBlur = 20;
-          ctx.shadowColor = 'gold';
-          ctx.fillStyle = star.color;
-          ctx.beginPath();
-          ctx.arc(cx, star.y, star.size, 0, Math.PI*2);
-          ctx.fill();
-          ctx.restore();
-          continue;
-        }
-
-        // Rotate around Y axis
-        const cos = Math.cos(time + star.angle);
-        const sin = Math.sin(time + star.angle);
-        
-        // 3D projection
-        let x = star.baseX * cos - star.baseZ * sin;
-        let z = star.baseZ * cos + star.baseX * sin;
-        
-        // Perspective scale
-        const scale = 300 / (300 + z + 200); // Simple perspective
-        const screenX = cx + x * scale;
-        const screenY = star.y * scale; // Also scale Y for perspective height
-
-        // Mouse Repulsion (2D approximation) with zero-distance guard
-        const dx = screenX - mouse.x;
-        const dy = screenY - mouse.y;
-        const dist = Math.sqrt(dx*dx + dy*dy) || 1; // guard: if zero -> 1
-
-        if (!reduceMotion && dist < 100) {
-          const force = (100 - dist) / 100;
-          const nx = dx / dist;
-          const ny = dy / dist;
-          star.vx += nx * force * 5;
-          star.vy += ny * force * 5;
-        }
-
-        // Physics Return / damping
-        star.vx *= 0.9;
-        star.vy *= 0.9;
-        star.vx -= star.vx * 0.1;
-        star.vy -= star.vy * 0.1;
-
-        const drawX = screenX + star.vx;
-        const drawY = screenY + star.vy;
-        const drawSize = Math.max(0.1, star.size * scale);
-
-        // Draw star
+    // 2. Draw Stars (Pseudo 3D)
+    stars.forEach(star => {
+      if(star.isTop) {
+        // Draw top star simply
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = 'gold';
         ctx.fillStyle = star.color;
-        ctx.globalAlpha = scale; // Fade distant stars
         ctx.beginPath();
-        ctx.arc(drawX, drawY, drawSize, 0, Math.PI*2);
+        ctx.arc(cx, star.y, star.size, 0, Math.PI*2);
         ctx.fill();
+        ctx.shadowBlur = 0;
+        return;
       }
-      ctx.globalAlpha = 1;
 
-      rafId = requestAnimationFrame(loop);
-    }
+      // Rotate around Y axis
+      const cos = Math.cos(time + star.angle);
+      const sin = Math.sin(time + star.angle);
+      
+      // 3D projection
+      let x = star.baseX * cos - star.baseZ * sin;
+      let z = star.baseZ * cos + star.baseX * sin;
+      
+      // Perspective scale
+      const scale = 300 / (300 + z + 200); // Simple perspective
+      const screenX = cx + x * scale;
+      const screenY = star.y * scale; // Also scale Y for perspective height
 
-    loop();
-  }
-
-  // Start animation now that resize() ran
-  // Respect reduced motion: still draw static stars but avoid heavy sparkles if reduceMotion
-  if (!document.hidden) {
-    animate();
-  }
-
-  // Pause/Resume on page visibility to save resources
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
+      // Mouse Repulsion (2D approximation)
+      const dx = screenX - mouse.x;
+      const dy = screenY - mouse.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      
+      if(dist < 100) {
+        const force = (100 - dist) / 100;
+        star.vx += (dx/dist) * force * 5;
+        star.vy += (dy/dist) * force * 5;
       }
-    } else {
-      if (!rafId) animate();
-    }
-  });
+
+      // Physics Return
+      star.vx *= 0.9;
+      star.vy *= 0.9;
+      star.vx -= (star.vx) * 0.1; 
+      star.vy -= (star.vy) * 0.1; // Damping
+
+      const drawX = screenX + star.vx;
+      const drawY = screenY + star.vy;
+      const drawSize = Math.max(0.1, star.size * scale);
+
+      // Draw based on depth (Z)
+      ctx.fillStyle = star.color;
+      ctx.globalAlpha = scale; // Fade distant stars
+      ctx.beginPath();
+      ctx.arc(drawX, drawY, drawSize, 0, Math.PI*2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    requestAnimationFrame(animate);
+  }
+  animate();
 
   // 6. Falling Snow (DOM for performance on mobile)
   const snowContainer = document.getElementById('snowContainer');
-  let snowTimer = null;
   function addSnowflake() {
     const el = document.createElement('div');
     el.className = 'snowflake';
@@ -533,28 +450,8 @@
     snowContainer.appendChild(el);
     setTimeout(() => el.remove(), 5000);
   }
+  setInterval(addSnowflake, 200);
 
-  // Adaptive snow frequency (lighter on mobile)
-  const snowIntervalMs = isMobile ? 350 : 200;
-  function startSnow() {
-    if (snowTimer) clearInterval(snowTimer);
-    snowTimer = setInterval(addSnowflake, snowIntervalMs);
-  }
-  function stopSnow() {
-    if (snowTimer) { clearInterval(snowTimer); snowTimer = null; }
-  }
-  // Start snow only when visible to save CPU
-  if (!document.hidden) startSnow();
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) stopSnow(); else startSnow();
-  });
-
-  // Accessibility: pause animations if reduced-motion is requested
-  if (reduceMotion) {
-    // Stop particle generation and stop snow for reduced motion to be considerate
-    stopSnow();
-    particles = [];
-  }
 </script>
 </body>
 </html>
