@@ -61,46 +61,60 @@
     filter: blur(0);
   }
 
-  /* NEW: Prediction Button Styles */
-  .prediction-container {
-    margin-top: 2rem;
-    position: relative;
-    z-index: 10;
-    opacity: 0;
-    transition: opacity 1s ease 1s; /* Fades in after the text */
+  /* Gold Gradient and Shimmer for Final Message */
+  .final-message .text {
+    background: linear-gradient(to right, #bf953f 20%, #fcf6ba 40%, #b38728 60%, #fcf6ba 80%, #bf953f 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: goldShimmer 4s linear infinite;
   }
 
-  .final-message.active .prediction-container {
-    opacity: 1;
+  @keyframes goldShimmer {
+    to { background-position: 200% center; }
   }
 
-  .magic-btn {
-    background: rgba(255, 215, 0, 0.1);
-    border: 1px solid rgba(255, 215, 0, 0.5);
-    color: #ffd700;
-    padding: 15px 35px;
+  /* Glassy Button Effect */
+  .glass-btn {
+    margin-top: 40px;
+    padding: 16px 32px;
     font-family: 'Inter', sans-serif;
     font-size: 1.1rem;
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50px;
     cursor: pointer;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    opacity: 0;
+    transform: translateY(20px);
+    z-index: 100;
   }
 
-  .magic-btn:hover {
-    background: rgba(255, 215, 0, 0.25);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-    transform: scale(1.05);
+  .active .glass-btn {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 1.2s;
   }
 
-  .prediction-output {
+  .glass-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+  }
+
+  #predictionDisplay {
     margin-top: 25px;
-    font-size: clamp(1.2rem, 3vw, 1.6rem);
-    color: #fff;
-    min-height: 1.6em;
+    font-size: 1.3rem;
+    color: #fcf6ba;
+    font-style: italic;
     font-weight: 300;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    min-height: 2em;
+    max-width: 600px;
     transition: opacity 0.5s ease;
   }
   
@@ -154,14 +168,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1));
     animation: starPulse 1.5s ease-in-out infinite;
-  }
-  
-  .cursor.active::before {
-    font-size: 32px;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 1)) drop-shadow(0 0 60px rgba(255, 100, 0, 0.8));
-    animation: starPulse 0.5s ease-in-out infinite;
   }
   
   @keyframes starPulse {
@@ -174,24 +182,12 @@
     position: relative;
   }
   
-  .final-message::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 50%, rgba(46, 125, 50, 0.05) 0%, transparent 50%);
-    animation: bgShift 10s ease-in-out infinite;
-  }
-  
-  @keyframes bgShift {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-  
   .snow-overlay {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 9999;
   }
@@ -210,16 +206,9 @@
       opacity: 0;
     }
   }
-  
-  @media (pointer: coarse) {
-    canvas { cursor: default; }
-    .cursor { display: none; }
-    .text { font-size: clamp(1.5rem, 5vw, 3rem); }
-  }
 </style>
 </head>
 <body>
-
 <div class="cursor"></div>
 <div class="snow-overlay" id="snowOverlay"></div>
 
@@ -245,11 +234,9 @@
 </section>
 
 <section class="final-message">
-  <div class="text" data-text="Merry Christmas❤️||May your holidays sparkle with joy" style="position: relative; z-index: 1;"></div>
-  <div class="prediction-container">
-    <button id="predictBtn" class="magic-btn">Reveal My 2026 Prediction</button>
-    <div id="predictionText" class="prediction-output"></div>
-  </div>
+  <div class="text" data-text="Merry Christmas❤️|May your holidays sparkle with joy" style="position: relative; z-index: 1;"></div>
+  <button class="glass-btn" onclick="revealPrediction()">Reveal my 2026 Prediction</button>
+  <div id="predictionDisplay"></div>
 </section>
 
 <script>
@@ -257,7 +244,7 @@
   const STAR_COUNT = isMobile ? 300 : 500;
   const PARTICLE_LIMIT = isMobile ? 50 : 100;
   
-  // Split text into characters
+  // Text Animation Setup
   document.querySelectorAll('.text[data-text]').forEach(el => {
     const text = el.getAttribute('data-text');
     const lines = text.split('|');
@@ -275,9 +262,10 @@
     });
   });
   
-  // Custom cursor
+  // Custom Cursor
   const cursor = document.querySelector('.cursor');
-  let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+  let mouseX = 0, mouseY = 0;
+  let cursorX = 0, cursorY = 0;
   
   document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
@@ -293,51 +281,46 @@
   }
   if (!isMobile) animateCursor();
   
-  // Intersection Observer
-  const observerOptions = { threshold: 0.5 };
-  let scrollLockTimeout;
+  // Observer for section entry
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-        if (!entry.target.classList.contains('active')) {
-          entry.target.classList.add('active');
-          document.body.style.overflow = 'hidden';
-          clearTimeout(scrollLockTimeout);
-          scrollLockTimeout = setTimeout(() => { document.body.style.overflow = ''; }, 1000);
-        }
+        entry.target.classList.add('active');
       }
     });
-  }, observerOptions);
-  document.querySelectorAll('.text, .final-message').forEach(el => observer.observe(el));
+  }, { threshold: 0.5 });
   
-  // Prediction Logic
-  const predictions = [
-    "2026: A year of unexpected travel and new horizons. ✈️",
-    "2026: Your hard work turns into a golden opportunity. 🌟",
-    "2026: A year of deep connections and meaningful laughter. ✨",
-    "2026: You will master a skill you haven't started yet. 📚",
-    "2026: A season of peace, health, and total clarity. 🌿",
-    "2026: Your creativity will reach levels you never imagined. 🎨",
-    "2026: A surprise blessing is heading your way. 🎁"
-  ];
+  document.querySelectorAll('section, .text').forEach(el => observer.observe(el));
 
-  document.getElementById('predictBtn').addEventListener('click', (e) => {
-    const rect = e.target.getBoundingClientRect();
-    // Reusing your createExplosion function
-    createExplosion(rect.left + rect.width/2, rect.top + rect.height/2, 25);
+  // 2026 Prediction Function
+  function revealPrediction() {
+    const predictions = [
+      "2026 will be the year your biggest spark turns into a flame. 🔥",
+      "Expect a major travel adventure in the second half of 2026. ✈️",
+      "A creative project you've been dreaming of will finally take flight. 🎨",
+      "2026 brings deep connections and unexpected new friendships. 🤝",
+      "Your hard work in 2025 will result in a huge 'win' by March 2026. 🏆",
+      "This is the year of balance: perfect harmony between work and play. ⚖️",
+      "An old dream will resurface with a new, exciting twist. ✨"
+    ];
+
+    const display = document.getElementById('predictionDisplay');
+    const randomPrediction = predictions[Math.floor(Math.random() * predictions.length)];
     
-    const output = document.getElementById('predictionText');
-    output.style.opacity = 0;
+    display.style.opacity = 0;
     setTimeout(() => {
-      output.textContent = predictions[Math.floor(Math.random() * predictions.length)];
-      output.style.opacity = 1;
-    }, 200);
-  });
-
-  // Christmas Tree Canvas
+      display.innerText = randomPrediction;
+      display.style.opacity = 1;
+    }, 300);
+    
+    // Add firework effect on click
+    createExplosion(window.innerWidth/2, window.innerHeight/2 + 150, 20);
+  }
+  
+  // Canvas Logic
   const canvas = document.getElementById('treeCanvas');
   const ctx = canvas.getContext('2d', { alpha: false });
-  let stars = [], mouse = { x: -1000, y: -1000 }, particles = [], animationId;
+  let stars = [], particles = [];
   
   function resizeCanvas() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -353,9 +336,11 @@
   
   function initStars() {
     stars = [];
-    const centerX = window.innerWidth / 2, centerY = window.innerHeight / 2;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
     const treeHeight = Math.min(window.innerHeight * 0.8, 650);
     const treeWidth = treeHeight * 0.85;
+    
     for (let i = 0; i < STAR_COUNT; i++) {
       const progress = i / STAR_COUNT;
       const y = centerY - treeHeight / 2 + progress * treeHeight;
@@ -364,23 +349,24 @@
       const radius = Math.random() * radiusAtY;
       const x = centerX + Math.cos(theta) * radius;
       const z = Math.sin(theta) * radius;
+      
       stars.push({
         x, y, baseX: x, baseY: y, baseZ: z, baseRadius: radius, baseTheta: theta,
         angle: Math.random() * Math.PI * 2, orbitRadius: 25 + Math.random() * 15,
         speed: 0.002 + Math.random() * 0.003, radius: 1.2 + Math.random() * 2,
         hue: 40 + Math.random() * 20, brightness: 0.7 + Math.random() * 0.3,
-        vx: 0, vy: 0, ovx: 0, ovy: 0, rotationAngle: 0
+        vx: 0, vy: 0, ovx: 0, ovy: 0
       });
     }
+    // Star on Top
     stars.push({
       x: centerX, y: centerY - treeHeight / 2 - 35, baseX: centerX, baseY: centerY - treeHeight / 2 - 35,
       baseZ: 0, baseRadius: 0, baseTheta: 0, angle: 0, orbitRadius: 0, speed: 0.008,
-      radius: 9, hue: 50, brightness: 1, isTop: true, vx: 0, vy: 0, ovx: 0, ovy: 0, rotationAngle: 0
+      radius: 9, hue: 50, brightness: 1, isTop: true, vx: 0, vy: 0, ovx: 0, ovy: 0
     });
   }
-  
+
   function createExplosion(x, y, count = 25) {
-    if (particles.length > PARTICLE_LIMIT) return;
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i) / count;
       const velocity = 3 + Math.random() * 3;
@@ -390,95 +376,70 @@
       });
     }
   }
-  
-  function handleInteraction(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = clientX - rect.left;
-    mouse.y = clientY - rect.top;
-    stars.forEach(star => {
-      const dx = star.x - mouse.x, dy = star.y - mouse.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 180 && dist > 15) {
-        const force = (1 - dist / 180);
-        star.ovx = (-dy / dist) * force * 7;
-        star.ovy = (dx / dist) * force * 7;
-        star.vx += (dx / dist) * force * 2.5;
-        star.vy += (dy / dist) * force * 2.5;
-      } else { star.ovx *= 0.94; star.ovy *= 0.94; }
-    });
-  }
-  
-  canvas.addEventListener('mousemove', (e) => {
-    handleInteraction(e.clientX, e.clientY);
-    cursor.classList.add('active');
-  });
-  canvas.addEventListener('mouseleave', () => {
-    mouse = { x: -1000, y: -1000 };
-    cursor.classList.remove('active');
-  });
+
   canvas.addEventListener('click', (e) => {
-    createExplosion(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 30);
+    createExplosion(e.clientX, e.clientY, 30);
   });
-  
-  function drawStars(currentTime) {
+
+  function drawStars() {
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
+    
+    particles.forEach((p, i) => {
       p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life -= 0.018;
-      if (p.life <= 0) { particles.splice(i, 1); continue; }
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      if (p.life <= 0) particles.splice(i, 1);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
       ctx.fillStyle = `hsla(${p.hue}, 100%, 60%, ${p.life})`;
       ctx.fill();
-    }
-    const centerX = window.innerWidth / 2, globalRotation = Date.now() * 0.0003;
+    });
+
+    const centerX = window.innerWidth / 2;
+    const globalRotation = Date.now() * 0.0003;
+    
     stars.forEach(star => {
       if (!star.isTop) {
-        star.rotationAngle = star.baseTheta + globalRotation;
-        const rX = Math.cos(star.rotationAngle) * star.baseRadius;
-        const rZ = Math.sin(star.rotationAngle) * star.baseRadius;
-        star.baseX = centerX + rX;
-        star.currentDepth = rZ;
-        star.depthScale = 0.5 + (rZ / (window.innerHeight * 0.4) + 1) * 0.25;
+        const rotationAngle = star.baseTheta + globalRotation;
+        const rotatedX = Math.cos(rotationAngle) * star.baseRadius;
+        const rotatedZ = Math.sin(rotationAngle) * star.baseRadius;
+        star.baseX = centerX + rotatedX;
+        star.depthScale = 0.5 + (rotatedZ / (window.innerHeight * 0.4) + 1) * 0.25;
       }
-    });
-    const sortedStars = [...stars].sort((a, b) => (a.currentDepth || 0) - (b.currentDepth || 0));
-    sortedStars.forEach(star => {
+      
       star.angle += star.speed;
-      const tX = star.baseX + Math.cos(star.angle) * star.orbitRadius;
-      const tY = star.baseY + Math.sin(star.angle) * star.orbitRadius * 0.3;
-      star.x += star.ovx + star.vx; star.y += star.ovy + star.vy;
-      star.vx += (tX - star.x) * 0.02; star.vy += (tY - star.y) * 0.02;
-      star.vx *= 0.88; star.vy *= 0.88;
+      const targetX = star.baseX + Math.cos(star.angle) * star.orbitRadius;
+      const targetY = star.baseY + Math.sin(star.angle) * star.orbitRadius * 0.3;
+      
+      star.x += (targetX - star.x) * 0.1;
+      star.y += (targetY - star.y) * 0.1;
+      
       ctx.beginPath();
       const finalRadius = star.radius * (star.depthScale || 1);
       ctx.arc(star.x, star.y, finalRadius, 0, Math.PI * 2);
+      
       if (star.isTop) {
-        const pulse = Math.sin(Date.now() * 0.004) * 0.3 + 0.7;
-        ctx.fillStyle = `hsla(50, 100%, ${75 * pulse}%, ${pulse})`;
-        ctx.shadowBlur = 40 * pulse; ctx.shadowColor = 'gold';
+        ctx.fillStyle = `hsla(50, 100%, 75%, ${Math.sin(Date.now()*0.004)*0.3+0.7})`;
       } else {
-        const alpha = 0.5 + (star.depthScale || 1) * 0.5;
-        ctx.fillStyle = `hsla(${star.hue}, 100%, ${50 + star.brightness * 25}%, ${alpha})`;
+        ctx.fillStyle = `hsla(${star.hue}, 100%, 70%, ${0.5 + (star.depthScale || 1) * 0.5})`;
       }
-      ctx.fill(); ctx.shadowBlur = 0;
+      ctx.fill();
     });
     requestAnimationFrame(drawStars);
   }
   drawStars();
   
-  function createSnow() {
+  setInterval(() => {
     const snowflake = document.createElement('div');
     snowflake.className = 'snowflake';
     const size = 3 + Math.random() * 5;
-    snowflake.style.width = size + 'px'; snowflake.style.height = size + 'px';
+    snowflake.style.width = size + 'px';
+    snowflake.style.height = size + 'px';
     snowflake.style.left = Math.random() * 100 + '%';
     snowflake.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
     snowflake.style.animationDuration = (3 + Math.random() * 4) + 's';
     document.getElementById('snowOverlay').appendChild(snowflake);
     setTimeout(() => snowflake.remove(), 7000);
-  }
-  setInterval(createSnow, 150);
+  }, 150);
 </script>
 </body>
 </html>
