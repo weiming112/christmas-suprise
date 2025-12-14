@@ -1,159 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scrolling Christmas Surprise</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrolling Christmas Surprise</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollSmoother.min.js"></script>
 
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollSmoother.min.js"></script>
-
-  <style>
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #0b0b0b;
-      color: white;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    section {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .sticky {
-      position: sticky;
-      top: 30%;
-    }
-    .text {
-      max-width: 800px;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      font-weight: 500;
-      line-height: 1.3;
-      opacity: 0;
-      transform: translateY(40px);
-      transition: opacity 0.9s ease, transform 0.9s ease;
-    }
-    .text.show { opacity: 1; transform: translateY(0); }
-    .small { font-size: 1.2rem; opacity: 0.6; margin-top: 16px; }
-    .hint { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); font-size: 0.9rem; opacity: 0.4; }
-    img {
-      max-width: 80%;
-      border-radius: 16px;
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    canvas { display: block; width: 100%; height: 100%; }
-  </style>
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background:#0b0b0b;
+    color:white;
+    overflow-x:hidden;
+  }
+  section{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px 20px;
+    position:relative;
+  }
+  .text{
+    max-width:800px;
+    font-size:clamp(1.8rem,4vw,3rem);
+    font-weight:500;
+    line-height:1.3;
+    opacity:0;
+    transform:translateY(40px);
+  }
+  .text.show{opacity:1; transform:translateY(0); transition:all 1s ease;}
+  img{
+    max-width:80%;
+    border-radius:16px;
+    opacity:0;
+    transform:translateY(40px);
+  }
+  canvas{display:block;width:100%;height:100%;}
+</style>
 </head>
 <body>
 
-  <!-- Sticky Hero Text -->
-  <section>
-    <div class="sticky text show">
-      Hey 🙂<br>
-      <div class="small">scroll slowly</div>
-      <div class="hint">↓</div>
-    </div>
-  </section>
+<!-- Text forming animation -->
+<section>
+  <div class="text" id="formText">Hey 🙂</div>
+</section>
 
-  <!-- Fade-in text sections -->
-  <section>
-    <div class="text">I made this just for you</div>
-  </section>
+<section>
+  <div class="text" id="formText2">I made this just for you</div>
+</section>
 
-  <section>
-    <div class="text">Each part appears intentionally<br>like a little surprise</div>
-  </section>
+<section>
+  <div class="text" id="formText3">Each part appears intentionally<br>like a little surprise</div>
+</section>
 
-  <!-- Image section -->
-  <section>
-    <img src="Happy-Emoji-PNG-High-Quality-Image.png" alt="Happy Emoji" class="text">
-  </section>
+<!-- Image section -->
+<section>
+  <img src="Happy-Emoji-PNG-High-Quality-Image.png" alt="Happy Emoji" class="text">
+</section>
 
-  <!-- Interactive Christmas Tree -->
-  <section style="position:relative; height:100vh;">
-    <canvas id="treeCanvas"></canvas>
-  </section>
+<!-- Interactive Christmas Tree -->
+<section style="position:relative; height:100vh;">
+  <canvas id="treeCanvas"></canvas>
+</section>
 
-  <!-- Ending Text -->
-  <section>
-    <div class="text">Merry Christmas 🎄❤️</div>
-  </section>
+<section>
+  <div class="text" id="formText4">Merry Christmas 🎄❤️</div>
+</section>
 
-  <script>
-    // GSAP Smooth Scroll
-    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-    ScrollSmoother.create({ smooth: 1.2, effects: true });
+<script>
+// GSAP Smooth Scroll
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+ScrollSmoother.create({smooth:1.2, effects:true});
 
-    // IntersectionObserver for fade-in text/images
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('show'); });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('.text, img').forEach(el => observer.observe(el));
+// IntersectionObserver for fade-in
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('show'); });
+},{threshold:0.5});
+document.querySelectorAll('.text, img').forEach(el=>observer.observe(el));
 
-    // Interactive rotating stars (Christmas tree)
-    const canvas = document.getElementById('treeCanvas');
-    const ctx = canvas.getContext('2d');
-    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+// Text forming animation
+function animateText(id){
+  const el = document.getElementById(id);
+  const letters = el.textContent.split('');
+  el.textContent='';
+  letters.forEach(l=>{
+    const span = document.createElement('span');
+    span.textContent=l;
+    span.style.opacity=0;
+    span.style.display='inline-block';
+    el.appendChild(span);
+  });
+  const spans = el.querySelectorAll('span');
+  gsap.to(spans,{opacity:1, y:0, duration:0.8, stagger:0.05, scrollTrigger:{trigger:el,start:"top 80%"}});  
+}
+animateText('formText');
+animateText('formText2');
+animateText('formText3');
+animateText('formText4');
 
-    const stars = [];
-    const starCount = 180;
-    const centerX = canvas.width/2;
-    const centerY = canvas.height/2;
-    const treeHeight = 300;
+// Interactive rotating stars (bigger, better)
+const canvas=document.getElementById('treeCanvas');
+const ctx=canvas.getContext('2d');
+function resizeCanvas(){canvas.width=window.innerWidth; canvas.height=window.innerHeight;}
+window.addEventListener('resize',resizeCanvas);
+resizeCanvas();
 
-    for(let i=0;i<starCount;i++){
-      let y = Math.random()*treeHeight;
-      let xRange = y;
-      let x = centerX + (Math.random()*2-1)*xRange;
-      stars.push({x, y, baseX:x, baseY:y, angle: Math.random()*Math.PI*2, radius:1+Math.random()*2});
-    }
+const stars=[];
+const starCount=300; // more stars
+const centerX=canvas.width/2;
+const centerY=canvas.height/2;
+const treeHeight=400; // taller tree
 
-    let mouse = {x:-1000, y:-1000};
-    canvas.addEventListener('mousemove', e => mouse = {x:e.clientX, y:e.clientY});
-    canvas.addEventListener('mouseleave', e => mouse = {x:-1000, y:-1000});
+for(let i=0;i<starCount;i++){
+  let y=Math.random()*treeHeight;
+  let xRange=y;
+  let x=centerX+(Math.random()*2-1)*xRange;
+  stars.push({x,y,baseX:x,baseY:y,angle:Math.random()*Math.PI*2,radius:1+Math.random()*3});
+}
 
-    function drawStars(){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      for(let s of stars){
-        s.angle += 0.01;
-        let r = 50;
-        let drawX = s.baseX + Math.cos(s.angle)*r;
-        let drawY = s.baseY + Math.sin(s.angle)*r;
+let mouse={x:-1000,y:-1000};
+canvas.addEventListener('mousemove',e=>mouse={x:e.clientX,y:e.clientY});
+canvas.addEventListener('mouseleave',e=>mouse={x:-1000,y:-1000});
 
-        // repel from mouse
-        let dx = drawX - mouse.x;
-        let dy = drawY - mouse.y;
-        let dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist<80){ drawX += dx/2; drawY += dy/2; }
-
-        ctx.beginPath();
-        ctx.arc(drawX, drawY, s.radius, 0, Math.PI*2);
-        ctx.fillStyle = 'yellow';
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = 'yellow';
-        ctx.fill();
-      }
-      requestAnimationFrame(drawStars);
-    }
-    drawStars();
-  </script>
+function drawStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let s of stars){
+    s.angle+=0.02; // faster rotation
+    let r=80; // wider rotation radius
+    let drawX=s.baseX+Math.cos(s.angle)*r;
+    let drawY=s.baseY+Math.sin(s.angle)*r;
+    let dx=drawX-mouse.x;
+    let dy=drawY-mouse.y;
+    let dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<120){drawX+=dx/2; drawY+=dy/2;} // stronger repel
+    ctx.beginPath();
+    ctx.arc(drawX,drawY,s.radius,0,Math.PI*2);
+    ctx.fillStyle='yellow';
+    ctx.shadowBlur=8;
+    ctx.shadowColor='yellow';
+    ctx.fill();
+  }
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+</script>
 
 </body>
 </html>
