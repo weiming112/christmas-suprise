@@ -56,11 +56,7 @@
       opacity: 0;
       transform: translateY(40px);
     }
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
+    canvas { display: block; width: 100%; height: 100%; }
   </style>
 </head>
 <body>
@@ -83,9 +79,9 @@
     <div class="text">Each part appears intentionally<br>like a little surprise</div>
   </section>
 
-  <!-- Image section (replace your-image.jpg) -->
+  <!-- Image section -->
   <section>
-    <img src="Happy-Emoji-PNG-High-Quality-Image.png" alt="Surprise Image" class="text">
+    <img src="Happy-Emoji-PNG-High-Quality-Image.png" alt="Happy Emoji" class="text">
   </section>
 
   <!-- Interactive Christmas Tree -->
@@ -124,7 +120,7 @@
 
     for(let i=0;i<starCount;i++){
       let y = Math.random()*treeHeight;
-      let xRange = y; 
+      let xRange = y;
       let x = centerX + (Math.random()*2-1)*xRange;
       stars.push({x, y, baseX:x, baseY:y, angle: Math.random()*Math.PI*2, radius:1+Math.random()*2});
     }
