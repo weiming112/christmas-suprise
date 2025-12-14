@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scrolling Christmas Surprise</title>
+<title>A Magical 2026 Surprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
   * {
@@ -39,64 +39,28 @@
     scroll-snap-stop: always;
   }
   
+  /* Apple-Style Text Animation Styles */
   .text {
     max-width: 800px;
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 500;
     line-height: 1.4;
+    perspective: 1000px;
   }
   
   .text span {
     display: inline-block;
     opacity: 0;
-    transform: translateY(100px) rotateX(-90deg);
+    transform: translateY(60px) rotateX(-25deg);
     filter: blur(10px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform, opacity, filter;
   }
   
-  .text.active span {
-    opacity: 1;
-    transform: translateY(0) rotateX(0deg);
-    filter: blur(0);
-  }
-  
-  .emoji-section {
-    font-size: clamp(8rem, 20vw, 15rem);
-    opacity: 0;
-    transform: scale(0) rotate(-180deg);
-    transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    will-change: transform, opacity;
-  }
-  
-  .emoji-section.active {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
-  
+  /* Tree Section */
   #treeSection {
     background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
     position: relative;
     overflow: hidden;
-  }
-  
-  .tree-hint {
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255, 215, 0, 0.8);
-    font-size: 1.2rem;
-    font-weight: 300;
-    text-align: center;
-    z-index: 10;
-    animation: hintFade 3s ease-in-out infinite;
-    pointer-events: none;
-  }
-  
-  @keyframes hintFade {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
   }
   
   canvas {
@@ -106,117 +70,88 @@
     cursor: none;
     touch-action: none;
   }
-  
-  .cursor {
-    width: 30px;
-    height: 30px;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transition: all 0.15s ease;
-    will-change: transform;
-  }
-  
-  .cursor::before {
-    content: '⭐';
-    font-size: 24px;
+
+  .tree-hint {
     position: absolute;
-    top: 50%;
+    bottom: 50px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
-    animation: starPulse 1.5s ease-in-out infinite;
+    transform: translateX(-50%);
+    color: rgba(255, 215, 0, 0.8);
+    font-size: 1.2rem;
+    font-weight: 300;
+    animation: hintFade 3s ease-in-out infinite;
+    pointer-events: none;
   }
-  
-  .cursor.active::before {
-    font-size: 32px;
-    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 1)) drop-shadow(0 0 60px rgba(255, 100, 0, 0.8));
-    animation: starPulse 0.5s ease-in-out infinite;
-  }
-  
-  @keyframes starPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-    50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
-  }
-  
-  .final-message {
-    background: #0a0a0a;
-    position: relative;
-  }
-  
-  .final-message::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 50%, rgba(46, 125, 50, 0.05) 0%, transparent 50%);
-    animation: bgShift 10s ease-in-out infinite;
-  }
-  
-  @keyframes bgShift {
-    0%, 100% { opacity: 0.5; }
+
+  @keyframes hintFade {
+    0%, 100% { opacity: 0.4; }
     50% { opacity: 1; }
   }
   
-  .controls {
-    display: none;
+  /* Prediction Button Styles */
+  .prediction-container {
+    margin-top: 2.5rem;
+    position: relative;
+    z-index: 10;
   }
-  
-  .control-btn {
-    display: none;
+
+  .magic-btn {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+    padding: 18px 40px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+  }
+
+  .magic-btn:hover {
+    background: rgba(255, 215, 0, 0.25);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    transform: scale(1.05);
+  }
+
+  .prediction-output {
+    margin-top: 25px;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: #fff;
+    min-height: 1.6em;
+    font-weight: 300;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    transition: opacity 0.5s ease;
+  }
+
+  /* Cursor & Snow */
+  .cursor {
+    width: 30px; height: 30px;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transition: all 0.1s ease;
+  }
+  .cursor::before {
+    content: '⭐'; font-size: 24px; position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 10px gold);
   }
   
   .snow-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 9998;
   }
-  
   .snowflake {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: fall linear forwards;
+    position: absolute; background: white; border-radius: 50%;
+    opacity: 0.8; animation: fall linear forwards;
   }
-  
-  @keyframes fall {
-    to {
-      transform: translateY(100vh) translateX(var(--drift));
-      opacity: 0;
-    }
-  }
-  
-  @media (pointer: coarse) {
-    canvas {
-      cursor: default;
-    }
-    
-    .cursor {
-      display: none;
-    }
-    
-    .text {
-      font-size: clamp(1.5rem, 5vw, 3rem);
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .text {
-      font-size: clamp(1.5rem, 5vw, 2.5rem);
-    }
-  }
+  @keyframes fall { to { transform: translateY(100vh) translateX(var(--drift)); opacity: 0; } }
+
+  @media (pointer: coarse) { .cursor { display: none; } canvas { cursor: default; } }
 </style>
 </head>
 <body>
+
 <div class="cursor"></div>
 <div class="snow-overlay" id="snowOverlay"></div>
 
@@ -229,380 +164,180 @@
 </section>
 
 <section>
-  <div class="text" data-text="Each part appears intentionally|like a little surprise"></div>
-</section>
-
-<section>
-  <div class="text" data-text="Keep scrolling...|something magical awaits"></div>
+  <div class="text" data-text="Scroll slowly...|feel the magic unfold"></div>
 </section>
 
 <section id="treeSection">
   <canvas id="treeCanvas"></canvas>
-  <div class="tree-hint">Click anywhere for fireworks</div>
+  <div class="tree-hint">Interact with the tree</div>
 </section>
 
 <section class="final-message">
-  <div class="text" data-text="Merry Christmas❤️||May your holidays sparkle with joy" style="position: relative; z-index: 1;"></div>
+  <div class="text" data-text="Merry Christmas❤️"></div>
+  <div class="prediction-container">
+    <button id="predictBtn" class="magic-btn">Reveal My 2026</button>
+    <div id="predictionText" class="prediction-output"></div>
+  </div>
 </section>
 
 <script>
-  // Performance optimizations
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  const STAR_COUNT = isMobile ? 300 : 500;
-  const PARTICLE_LIMIT = isMobile ? 50 : 100;
-  
-  // Split text into characters
+  // --- TEXT SPLITTING ---
   document.querySelectorAll('.text[data-text]').forEach(el => {
-    const text = el.getAttribute('data-text');
-    const lines = text.split('|');
+    const lines = el.getAttribute('data-text').split('|');
     el.innerHTML = '';
-    
-    lines.forEach((line, lineIndex) => {
-      if (lineIndex > 0) el.appendChild(document.createElement('br'));
-      
-      const chars = line.split('');
-      chars.forEach((char, i) => {
+    lines.forEach((line, li) => {
+      if (li > 0) el.appendChild(document.createElement('br'));
+      line.split('').forEach((char, i) => {
         const span = document.createElement('span');
         span.textContent = char === ' ' ? '\u00A0' : char;
-        span.style.transitionDelay = `${(lineIndex * chars.length + i) * 0.025}s`;
         el.appendChild(span);
       });
     });
   });
-  
-  // Custom cursor
-  const cursor = document.querySelector('.cursor');
-  let mouseX = 0, mouseY = 0;
-  let cursorX = 0, cursorY = 0;
-  let isOverTree = false;
-  
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-  
-  function animateCursor() {
-    cursorX += (mouseX - cursorX) * 0.2;
-    cursorY += (mouseY - cursorY) * 0.2;
-    cursor.style.left = cursorX + 'px';
-    cursor.style.top = cursorY + 'px';
-    requestAnimationFrame(animateCursor);
-  }
-  if (!isMobile) animateCursor();
-  
-  // Intersection Observer
-  const observerOptions = {
-    threshold: 0.5,
-    rootMargin: '0px'
-  };
-  
-  let scrollLockTimeout;
-  
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-        if (!entry.target.classList.contains('active')) {
-          entry.target.classList.add('active');
-          
-          // Temporary scroll lock
-          document.body.style.overflow = 'hidden';
-          clearTimeout(scrollLockTimeout);
-          scrollLockTimeout = setTimeout(() => {
-            document.body.style.overflow = '';
-          }, 1000);
-        }
-      }
+
+  // --- APPLE-STYLE SCROLL ANIMATION ---
+  window.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('section:not(#treeSection)');
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      const viewHeight = window.innerHeight;
+      
+      // Calculate progress (0 entering bottom, 1 centered)
+      let progress = 1 - (rect.top / viewHeight);
+      progress = Math.max(0, Math.min(1.2, progress)); 
+
+      const spans = section.querySelectorAll('.text span');
+      spans.forEach((span, i) => {
+        const stagger = i * 0.03;
+        const letterProgress = Math.max(0, Math.min(1, (progress - stagger) * 2.5));
+        
+        span.style.opacity = letterProgress;
+        span.style.filter = `blur(${10 * (1 - letterProgress)}px)`;
+        span.style.transform = `translateY(${60 * (1 - letterProgress)}px) rotateX(${-25 * (1 - letterProgress)}deg)`;
+      });
     });
-  }, observerOptions);
-  
-  document.querySelectorAll('.text, .emoji-section').forEach(el => observer.observe(el));
-  
-  // Christmas Tree Canvas - Optimized
+  });
+
+  // --- PREDICTION LOGIC ---
+  const predictions = [
+    "2026: A year of unexpected travel and new horizons. ✈️",
+    "2026: Your hard work finally turns into a golden opportunity. 🌟",
+    "2026: A year of deep connections and meaningful laughter. ✨",
+    "2026: You will master a skill you haven't even started yet. 📚",
+    "2026: A season of peace, health, and total clarity. 🌿",
+    "2026: Your creativity will reach levels you never imagined. 🎨",
+    "2026: A surprise blessing is heading your way. 🎁"
+  ];
+
+  document.getElementById('predictBtn').addEventListener('click', (e) => {
+    const rect = e.target.getBoundingClientRect();
+    createExplosion(rect.left + rect.width/2, rect.top + rect.height/2, 30);
+    
+    const output = document.getElementById('predictionText');
+    output.style.opacity = 0;
+    setTimeout(() => {
+      output.textContent = predictions[Math.floor(Math.random() * predictions.length)];
+      output.style.opacity = 1;
+    }, 200);
+  });
+
+  // --- CHRISTMAS TREE CANVAS ---
   const canvas = document.getElementById('treeCanvas');
-  const ctx = canvas.getContext('2d', { alpha: false });
-  
-  let stars = [];
-  let mouse = { x: -1000, y: -1000 };
-  let particles = [];
-  let animationId;
-  
-  function resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    ctx.scale(dpr, dpr);
+  const ctx = canvas.getContext('2d');
+  let stars = [], particles = [];
+  const STAR_COUNT = 450;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     initStars();
   }
-  
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-  
+  window.addEventListener('resize', resize);
+  resize();
+
   function initStars() {
     stars = [];
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    const treeHeight = Math.min(window.innerHeight * 0.8, 650);
-    const treeWidth = treeHeight * 0.85;
-    
-    // Create 3D spinning tree with cylindrical coordinates
+    const centerX = canvas.width / 2, centerY = canvas.height / 2;
+    const treeH = Math.min(canvas.height * 0.7, 500);
     for (let i = 0; i < STAR_COUNT; i++) {
-      const progress = i / STAR_COUNT;
-      const y = centerY - treeHeight / 2 + progress * treeHeight;
-      const radiusAtY = (progress * treeWidth) / 2;
-      
-      // Random angle around the tree (360 degrees)
+      const p = i / STAR_COUNT;
       const theta = Math.random() * Math.PI * 2;
-      const radius = Math.random() * radiusAtY;
-      
-      // Convert cylindrical to 2D projection
-      const x = centerX + Math.cos(theta) * radius;
-      const z = Math.sin(theta) * radius; // depth in 3D space
-      
+      const r = Math.random() * (p * treeH * 0.4);
       stars.push({
-        x, y,
-        baseX: x,
-        baseY: y,
-        baseZ: z,
-        baseRadius: radius,
-        baseTheta: theta,
-        angle: Math.random() * Math.PI * 2,
-        orbitRadius: 25 + Math.random() * 15,
-        speed: 0.002 + Math.random() * 0.003,
-        radius: 1.2 + Math.random() * 2,
+        baseX: centerX, baseY: centerY - treeH/2 + p * treeH,
+        baseTheta: theta, r: r,
+        x: 0, y: 0, vx: 0, vy: 0,
         hue: 40 + Math.random() * 20,
-        brightness: 0.7 + Math.random() * 0.3,
-        vx: 0, vy: 0,
-        ovx: 0, ovy: 0,
-        rotationAngle: 0
+        size: 1 + Math.random() * 2
       });
     }
-    
-    // Top star
-    stars.push({
-      x: centerX,
-      y: centerY - treeHeight / 2 - 35,
-      baseX: centerX,
-      baseY: centerY - treeHeight / 2 - 35,
-      baseZ: 0,
-      baseRadius: 0,
-      baseTheta: 0,
-      angle: 0,
-      orbitRadius: 0,
-      speed: 0.008,
-      radius: 9,
-      hue: 50,
-      brightness: 1,
-      isTop: true,
-      vx: 0, vy: 0,
-      ovx: 0, ovy: 0,
-      rotationAngle: 0
-    });
+    // Top Star
+    stars.push({ isTop: true, baseX: centerX, baseY: centerY - treeH/2 - 20, size: 8, hue: 50 });
   }
-  
-  function createExplosion(x, y, count = 25) {
-    if (particles.length > PARTICLE_LIMIT) return;
-    
+
+  function createExplosion(x, y, count) {
     for (let i = 0; i < count; i++) {
-      const angle = (Math.PI * 2 * i) / count;
-      const velocity = 3 + Math.random() * 3;
-      particles.push({
-        x, y,
-        vx: Math.cos(angle) * velocity,
-        vy: Math.sin(angle) * velocity,
-        life: 1,
-        hue: Math.random() * 360,
-        size: 2 + Math.random() * 3
-      });
+      const ang = Math.random() * Math.PI * 2;
+      const vel = 2 + Math.random() * 4;
+      particles.push({ x, y, vx: Math.cos(ang) * vel, vy: Math.sin(ang) * vel, life: 1, hue: Math.random() * 360 });
     }
   }
-  
-  // Mouse/Touch handlers
-  function handleInteraction(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = clientX - rect.left;
-    mouse.y = clientY - rect.top;
-    
-    stars.forEach(star => {
-      const dx = star.x - mouse.x;
-      const dy = star.y - mouse.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const orbitRadius = 180;
-      
-      if (dist < orbitRadius && dist > 15) {
-        const tangentX = -dy / dist;
-        const tangentY = dx / dist;
-        const force = (1 - dist / orbitRadius);
-        
-        star.ovx = tangentX * force * 7;
-        star.ovy = tangentY * force * 7;
-        star.vx += (dx / dist) * force * 2.5;
-        star.vy += (dy / dist) * force * 2.5;
-      } else {
-        star.ovx *= 0.94;
-        star.ovy *= 0.94;
-      }
-    });
-  }
-  
-  canvas.addEventListener('mousemove', (e) => {
-    handleInteraction(e.clientX, e.clientY);
-    isOverTree = true;
-    cursor.classList.add('active');
-  });
-  
-  canvas.addEventListener('mouseleave', () => {
-    mouse = { x: -1000, y: -1000 };
-    isOverTree = false;
-    cursor.classList.remove('active');
-  });
-  
-  canvas.addEventListener('click', (e) => {
-    createExplosion(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 30);
-  });
-  
-  // Touch support
-  canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    handleInteraction(touch.clientX, touch.clientY);
-  }, { passive: false });
-  
-  canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    handleInteraction(touch.clientX, touch.clientY);
-  }, { passive: false });
-  
-  canvas.addEventListener('touchend', () => {
-    mouse = { x: -1000, y: -1000 };
-    const rect = canvas.getBoundingClientRect();
-    createExplosion(rect.width / 2, rect.height / 2, 20);
-  });
-  
-  // Optimized draw loop
-  let lastTime = 0;
-  const targetFPS = 60;
-  const frameDelay = 1000 / targetFPS;
-  
-  function drawStars(currentTime) {
-    if (currentTime - lastTime < frameDelay) {
-      animationId = requestAnimationFrame(drawStars);
-      return;
-    }
-    lastTime = currentTime;
-    
-    // Clear with background
+
+  function animate() {
     ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    
-    // Update particles
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.2;
-      p.life -= 0.018;
-      
-      if (p.life <= 0) {
-        particles.splice(i, 1);
-        continue;
-      }
-      
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${p.hue}, 100%, 60%, ${p.life})`;
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${p.life * 0.8})`;
-      ctx.fill();
-    }
-    ctx.shadowBlur = 0;
-    
-    // Draw stars with 3D rotation and depth sorting
-    const centerX = window.innerWidth / 2;
-    const globalRotation = Date.now() * 0.0003; // Slow continuous rotation
-    
-    // Update star positions with 3D rotation
-    stars.forEach(star => {
-      if (!star.isTop) {
-        star.rotationAngle = star.baseTheta + globalRotation;
-        
-        // Convert back to 2D with rotation
-        const rotatedX = Math.cos(star.rotationAngle) * star.baseRadius;
-        const rotatedZ = Math.sin(star.rotationAngle) * star.baseRadius;
-        
-        // Calculate depth-based scale (stars further back are smaller)
-        const depthScale = 0.5 + (rotatedZ / (window.innerHeight * 0.4) + 1) * 0.25;
-        
-        star.baseX = centerX + rotatedX;
-        star.currentDepth = rotatedZ;
-        star.depthScale = depthScale;
-      }
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() * 0.0005;
+
+    // Particles
+    particles.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life -= 0.02;
+      if (p.life <= 0) particles.splice(i, 1);
+      ctx.fillStyle = `hsla(${p.hue}, 100%, 50%, ${p.life})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3 * p.life, 0, Math.PI * 2); ctx.fill();
     });
-    
-    // Sort by depth (back to front)
-    const sortedStars = [...stars].sort((a, b) => (a.currentDepth || 0) - (b.currentDepth || 0));
-    
-    sortedStars.forEach(star => {
-      star.angle += star.speed;
-      const orbitX = Math.cos(star.angle) * star.orbitRadius;
-      const orbitY = Math.sin(star.angle) * star.orbitRadius * 0.3;
-      
-      const targetX = star.baseX + orbitX;
-      const targetY = star.baseY + orbitY;
-      
-      star.x += star.ovx + star.vx;
-      star.y += star.ovy + star.vy;
-      
-      star.vx += (targetX - star.x) * 0.02;
-      star.vy += (targetY - star.y) * 0.02;
-      star.vx *= 0.88;
-      star.vy *= 0.88;
-      
-      ctx.beginPath();
-      const finalRadius = star.radius * (star.depthScale || 1);
-      ctx.arc(star.x, star.y, finalRadius, 0, Math.PI * 2);
-      
-      if (star.isTop) {
-        const pulse = Math.sin(Date.now() * 0.004) * 0.3 + 0.7;
-        ctx.fillStyle = `hsla(50, 100%, ${75 * pulse}%, ${pulse})`;
-        ctx.shadowBlur = 40 * pulse;
-        ctx.shadowColor = 'rgba(255, 215, 0, 1)';
+
+    // Stars
+    stars.forEach(s => {
+      if (!s.isTop) {
+        const angle = s.baseTheta + time;
+        const targetX = s.baseX + Math.cos(angle) * s.r;
+        const targetY = s.baseY + Math.sin(angle) * s.r * 0.2;
+        s.x += (targetX - s.x) * 0.1;
+        s.y += (targetY - s.y) * 0.1;
       } else {
-        const depthAlpha = 0.5 + (star.depthScale || 1) * 0.5;
-        ctx.fillStyle = `hsla(${star.hue}, 100%, ${50 + star.brightness * 25}%, ${depthAlpha})`;
-        ctx.shadowBlur = (6 + finalRadius) * (star.depthScale || 1);
-        ctx.shadowColor = `hsla(${star.hue}, 100%, 60%, ${0.4 * (star.depthScale || 1)})`;
+        s.x = s.baseX; s.y = s.baseY;
       }
-      
-      ctx.fill();
-      ctx.shadowBlur = 0;
+
+      ctx.shadowBlur = s.isTop ? 20 : 5;
+      ctx.shadowColor = `hsl(${s.hue}, 100%, 50%)`;
+      ctx.fillStyle = `hsl(${s.hue}, 100%, ${s.isTop ? 70 : 50}%)`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill();
     });
-    
-    animationId = requestAnimationFrame(drawStars);
+    requestAnimationFrame(animate);
   }
-  
-  drawStars(0);
-  
-  // Perpetual snow
-  function createSnow() {
-    const snowflake = document.createElement('div');
-    snowflake.className = 'snowflake';
-    const size = 3 + Math.random() * 5;
-    snowflake.style.width = size + 'px';
-    snowflake.style.height = size + 'px';
-    snowflake.style.left = Math.random() * 100 + '%';
-    snowflake.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
-    snowflake.style.animationDuration = (3 + Math.random() * 4) + 's';
-    
-    document.getElementById('snowOverlay').appendChild(snowflake);
-    
-    setTimeout(() => snowflake.remove(), 7000);
-  }
-  
-  // Start perpetual snow
-  setInterval(createSnow, 150);
+  animate();
+
+  // --- CURSOR ---
+  const cur = document.querySelector('.cursor');
+  window.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top = e.clientY + 'px';
+  });
+
+  // --- SNOW ---
+  setInterval(() => {
+    const s = document.createElement('div');
+    s.className = 'snowflake';
+    const sz = 2 + Math.random() * 4;
+    s.style.width = sz + 'px'; s.style.height = sz + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
+    s.style.animationDuration = (4 + Math.random() * 3) + 's';
+    document.getElementById('snowOverlay').appendChild(s);
+    setTimeout(() => s.remove(), 7000);
+  }, 200);
+
+  canvas.addEventListener('click', e => createExplosion(e.clientX, e.clientY, 20));
 </script>
 </body>
 </html>
