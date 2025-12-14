@@ -3,52 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Christmas Surprise</title>
-<link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<title>Scrolling Christmas Surprise</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #ffd700;
-    --red: #ff3333;
-    --green: #2e7d32;
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html {
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
     height: 100%;
     overflow-y: scroll;
-    background: #050505;
   }
 
   body {
-    font-family: 'Playfair Display', serif;
-    background: #050505;
-    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: white;
     overflow-x: hidden;
+    margin: 0;
   }
 
-  /* Audio Toggle Button */
-  .audio-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    color: var(--gold);
-    padding: 10px 15px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    backdrop-filter: blur(5px);
-  }
-  .audio-btn:hover { background: rgba(255, 215, 0, 0.1); border-color: var(--gold); }
+  /* Custom Scrollbar for nicer look */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #0a0a0a; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
   section {
     height: 100vh;
@@ -62,310 +44,414 @@
     position: relative;
     scroll-snap-align: start;
     scroll-snap-stop: always;
-    overflow: hidden;
+    overflow: hidden; /* Prevents overflow from animations */
   }
 
-  /* Text Styling Enhancements */
   .text {
     max-width: 800px;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.4;
     z-index: 2;
-    pointer-events: none;
+    pointer-events: none; /* Allows clicking through text */
   }
 
-  .main-msg {
-    font-family: 'Mountains of Christmas', cursive;
-    font-size: clamp(3rem, 8vw, 5rem);
-    color: var(--gold);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-    line-height: 1.2;
-    margin-bottom: 20px;
-  }
-
-  .sub-msg {
-    font-size: clamp(1.2rem, 3vw, 2rem);
-    opacity: 0.9;
-    font-weight: 300;
-    font-style: italic;
-  }
-
-  /* Animations */
-  .reveal-text span {
+  .text span {
     display: inline-block;
     opacity: 0;
-    transform: translateY(40px);
-    filter: blur(5px);
-    transition: all 1s cubic-bezier(0.2, 1, 0.3, 1);
+    transform: translateY(60px) rotateX(-90deg);
+    filter: blur(10px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity, filter;
   }
 
-  .reveal-text.active span {
+  .text.active span {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) rotateX(0deg);
     filter: blur(0);
+  }
+
+  /* Emoji Section */
+  .emoji-section {
+    font-size: clamp(8rem, 20vw, 15rem);
+    opacity: 0;
+    transform: scale(0.5) rotate(-180deg);
+    transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .emoji-section.active {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
 
   /* Tree Section */
   #treeSection {
-    background: radial-gradient(circle at center, #111122 0%, #050505 80%);
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
+    position: relative;
   }
 
   .tree-hint {
     position: absolute;
-    bottom: 12%;
+    bottom: 10%;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'Mountains of Christmas', cursive;
-    font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 215, 0, 0.6);
+    font-size: 1rem;
+    font-weight: 300;
+    letter-spacing: 1px;
     pointer-events: none;
-    animation: float 3s ease-in-out infinite;
+    animation: pulse 2s infinite;
   }
-  @keyframes float { 0%,100%{transform:translate(-50%,0);} 50%{transform:translate(-50%,-10px);} }
+
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
   canvas {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    touch-action: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* Important: allows scrolling on mobile UNLESS touching tree directly */
+    touch-action: pan-y; 
   }
 
   /* Custom Cursor */
   .cursor {
-    width: 40px; height: 40px;
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
+    width: 20px;
+    height: 20px;
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    transition: transform 0.1s;
     mix-blend-mode: difference;
-  }
-  .cursor-dot {
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 10000;
+    transition: transform 0.1s;
   }
 
-  @media (hover: none) { .cursor, .cursor-dot { display: none; } }
+  .cursor::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100%; height: 100%;
+    background: rgba(255, 215, 0, 0.8);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  }
+
+  .cursor.active { transform: scale(2.5); }
+  
+  .final-message::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 60%);
+    animation: glow 5s infinite alternate;
+  }
+  @keyframes glow { from { opacity: 0.5; } to { opacity: 1; } }
+
+  /* Snow Effect */
+  .snow-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .snowflake {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(105vh); }
+  }
+
+  @media (hover: none) {
+    .cursor { display: none; }
+  }
 </style>
 </head>
 <body>
 
-<audio id="bgMusic" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=christmas-magic-126446.mp3" type="audio/mpeg">
-</audio>
-<button class="audio-btn" id="audioBtn">Turn Music On</button>
-
 <div class="cursor"></div>
-<div class="cursor-dot"></div>
+<div class="snow-container" id="snowContainer"></div>
 
 <section>
-  <div class="text reveal-text">
-    <div class="main-msg" data-text="Hello there"></div>
-    <div class="sub-msg" data-text="Turn up your volume..."></div>
-  </div>
+  <div class="text" data-text="Hey"></div>
 </section>
 
 <section>
-  <div class="text reveal-text">
-    <div class="main-msg" data-text="I made this"></div>
-    <div class="sub-msg" data-text="...just to see you smile."></div>
-  </div>
+  <div class="text" data-text="I made this just for you"></div>
 </section>
 
 <section>
-  <div class="emoji-section" style="font-size: 8rem; filter: drop-shadow(0 0 30px rgba(255,215,0,0.3));">🎁</div>
+  <div class="text" data-text="Each part appears intentionally |like a little surprise"></div>
+</section>
+
+<section>
+  <div class="emoji-section text">😊</div>
+</section>
+
+<section>
+  <div class="text" data-text="Keep scrolling...|something magical awaits"></div>
 </section>
 
 <section id="treeSection">
   <canvas id="treeCanvas"></canvas>
-  <div class="tree-hint">Tap the tree to make a wish</div>
+  <div class="tree-hint">Tap or hover to interact</div>
 </section>
 
 <section class="final-message">
-  <div class="text reveal-text">
-    <div class="main-msg" data-text="Merry Christmas"></div>
-    <div class="sub-msg" data-text="May your 2026 be filled with magic."></div>
-  </div>
+  <div class="text" data-text="Merry Christmas ❤️||May your holidays sparkle with joy"></div>
 </section>
 
 <script>
-  // --- AUDIO LOGIC ---
-  const audio = document.getElementById('bgMusic');
-  const btn = document.getElementById('audioBtn');
-  audio.volume = 0.4;
-  
-  btn.addEventListener('click', () => {
-    if(audio.paused) {
-      audio.play();
-      btn.textContent = "Pause Music";
-      btn.style.background = "rgba(255, 215, 0, 0.2)";
-    } else {
-      audio.pause();
-      btn.textContent = "Play Music";
-      btn.style.background = "";
-    }
-  });
+  // 1. Mobile Detection & Config
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const STAR_COUNT = isMobile ? 300 : 600; 
 
-  // --- TEXT REVEAL LOGIC ---
-  document.querySelectorAll('[data-text]').forEach(el => {
+  // 2. Text Split & Reveal Logic
+  document.querySelectorAll('.text[data-text]').forEach(el => {
     const text = el.getAttribute('data-text');
-    el.innerHTML = text.split('').map((char, i) => 
-      `<span style="transition-delay: ${i * 0.03}s">${char === ' ' ? '&nbsp;' : char}</span>`
-    ).join('');
+    const lines = text.split('|');
+    el.innerHTML = '';
+    
+    lines.forEach((line, lineIndex) => {
+      if (lineIndex > 0) el.appendChild(document.createElement('br'));
+      
+      const chars = line.split('');
+      chars.forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        // Stagger delay calculation
+        span.style.transitionDelay = `${(lineIndex * 10 + i) * 0.04}s`;
+        el.appendChild(span);
+      });
+    });
   });
 
+  // 3. Scroll Observer (REMOVED THE BUGGY SCROLL LOCK)
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.parentElement.classList.add('active');
-      else entry.target.parentElement.classList.remove('active');
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      } else {
+        entry.target.classList.remove('active');
+      }
     });
-  }, { threshold: 0.5 });
-  
-  document.querySelectorAll('.main-msg, .sub-msg').forEach(el => observer.observe(el));
+  }, { threshold: 0.4 });
 
-  // --- CURSOR LOGIC ---
+  document.querySelectorAll('.text, .emoji-section').forEach(el => observer.observe(el));
+
+  // 4. Custom Cursor
   const cursor = document.querySelector('.cursor');
-  const dot = document.querySelector('.cursor-dot');
-  let mouse = { x: -100, y: -100 };
-  let cPos = { x: -100, y: -100 };
+  let mouseX = -100, mouseY = -100;
+  let cursorX = -100, cursorY = -100;
 
-  document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
   function updateCursor() {
-    cPos.x += (mouse.x - cPos.x) * 0.1;
-    cPos.y += (mouse.y - cPos.y) * 0.1;
-    cursor.style.transform = `translate(${cPos.x - 20}px, ${cPos.y - 20}px)`;
-    dot.style.transform = `translate(${mouse.x - 3}px, ${mouse.y - 3}px)`;
+    // Smooth Lerp
+    cursorX += (mouseX - cursorX) * 0.2;
+    cursorY += (mouseY - cursorY) * 0.2;
+    cursor.style.left = `${cursorX}px`;
+    cursor.style.top = `${cursorY}px`;
     requestAnimationFrame(updateCursor);
   }
-  updateCursor();
+  if (!isMobile) updateCursor();
 
-  // --- 3. UPGRADED TREE LOGIC (Spiral & Wishes) ---
+  // 5. Canvas Tree Animation
   const canvas = document.getElementById('treeCanvas');
-  const ctx = canvas.getContext('2d');
-  let w, h;
+  const ctx = canvas.getContext('2d'); // Removed alpha:false to let gradient show
   let stars = [];
-  let wishes = [];
-  const wishWords = ["Joy", "Love", "Peace", "Hope", "Warmth", "Magic"];
+  let particles = [];
+  let w, h;
+  let mouse = { x: -1000, y: -1000 };
 
-  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; initTree(); }
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    initStars();
+  }
   window.addEventListener('resize', resize);
+  setTimeout(resize, 100); // Initial call
 
-  function initTree() {
+  function initStars() {
     stars = [];
-    const treeH = Math.min(h * 0.75, 600);
-    const treeW = treeH * 0.55;
-    const count = window.innerWidth < 600 ? 400 : 800;
-
-    for(let i=0; i<count; i++) {
-      const p = i / count;
-      const y = (h/2 - treeH/2) + p * treeH;
-      const radius = p * treeW;
+    const treeH = Math.min(h * 0.8, 600);
+    const treeW = treeH * 0.6;
+    
+    for(let i=0; i<STAR_COUNT; i++) {
+      const progress = i / STAR_COUNT;
+      const y = (h/2 - treeH/2) + progress * treeH;
+      const radiusAtY = progress * treeW;
       
-      // SPIRAL LOGIC: Adds structured "garland" effect
-      const spiralAngle = p * Math.PI * 15; 
-      const randomAngle = Math.random() * Math.PI * 2;
-      
-      // Mix spiral points and random points
-      const isSpiral = Math.random() > 0.5;
-      const angle = isSpiral ? spiralAngle : randomAngle;
+      // Cylindrical coordinates for 3D effect
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * radiusAtY;
       
       stars.push({
+        baseX: Math.cos(angle) * dist, // Relative to center
+        baseZ: Math.sin(angle) * dist, // Depth
         y: y,
-        baseY: y,
         angle: angle,
-        dist: Math.random() * radius, // Fill inside
         speed: 0.005 + Math.random() * 0.01,
-        size: Math.random() * 2 + (isSpiral ? 1.5 : 0.5),
-        color: isSpiral ? `hsl(${40 + Math.random()*10}, 100%, 60%)` : `hsla(150, 60%, 80%, 0.6)`,
-        isSpiral: isSpiral
+        color: `hsl(${40 + Math.random()*20}, 100%, ${60 + Math.random()*40}%)`,
+        size: 0.5 + Math.random() * 2,
+        
+        // Physics vars
+        x: 0, z: 0, 
+        vx: 0, vy: 0, vz: 0
       });
     }
+    
     // Top Star
-    stars.push({ isTop: true, y: (h/2 - treeH/2) - 15, size: 12, angle: 0, dist: 0 });
-  }
-  
-  // --- INTERACTION: WISHES ---
-  function spawnWish(x, y) {
-    const word = wishWords[Math.floor(Math.random() * wishWords.length)];
-    wishes.push({
-      x: x, y: y,
-      text: word,
-      life: 1,
-      vy: -2,
-      color: `hsl(${Math.random() * 60 + 20}, 100%, 70%)`
+    stars.push({
+      isTop: true,
+      x: 0, y: (h/2 - treeH/2) - 15, z: 0,
+      baseX: 0, baseZ: 0,
+      angle: 0, speed: 0,
+      color: '#ffd700', size: 10
     });
   }
 
-  canvas.addEventListener('click', e => {
+  // Interaction Handler
+  function handleInput(x, y) {
     const rect = canvas.getBoundingClientRect();
-    spawnWish(e.clientX - rect.left, e.clientY - rect.top);
-  });
-  
-  canvas.addEventListener('touchstart', e => {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    spawnWish(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+    mouse.x = x - rect.left;
+    mouse.y = y - rect.top;
+    
+    cursor.classList.add('active');
+    
+    // Create sparkles on movement
+    if(Math.random() > 0.8) createSparkle(mouse.x, mouse.y);
+  }
+
+  canvas.addEventListener('mousemove', e => handleInput(e.clientX, e.clientY));
+  canvas.addEventListener('touchmove', e => {
+    // e.preventDefault(); // Uncomment if you want to block scrolling while touching tree
+    handleInput(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive: false});
+
+  canvas.addEventListener('mouseleave', () => {
+    mouse.x = -1000;
+    cursor.classList.remove('active');
   });
 
-  // --- ANIMATION LOOP ---
+  function createSparkle(x, y) {
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5) * 4,
+      vy: (Math.random()-0.5) * 4,
+      life: 1,
+      color: `hsl(${Math.random()*360}, 100%, 70%)`
+    });
+  }
+
   function animate() {
+    // Clear rect to keep transparency for CSS background
     ctx.clearRect(0, 0, w, h);
+    
+    const cx = w/2;
+    // Rotate entire tree slowly
     const time = Date.now() * 0.0005;
-    const center = w / 2;
 
-    // Draw Stars
-    stars.forEach(s => {
-      if(s.isTop) {
-        ctx.fillStyle = "#ffd700";
-        ctx.shadowBlur = 30; ctx.shadowColor = "gold";
-        ctx.beginPath(); ctx.arc(center, s.y, s.size, 0, Math.PI*2); ctx.fill();
-        ctx.shadowBlur = 0; return;
+    // 1. Draw Sparkles
+    for(let i=particles.length-1; i>=0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.03;
+      if(p.life <= 0) { particles.splice(i, 1); continue; }
+      
+      ctx.beginPath();
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.life;
+      ctx.arc(p.x, p.y, 2 * p.life, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // 2. Draw Stars (Pseudo 3D)
+    stars.forEach(star => {
+      if(star.isTop) {
+        // Draw top star simply
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = 'gold';
+        ctx.fillStyle = star.color;
+        ctx.beginPath();
+        ctx.arc(cx, star.y, star.size, 0, Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        return;
       }
 
-      // Rotate
-      const realAngle = s.angle + time;
-      const x = Math.cos(realAngle) * s.dist;
-      const z = Math.sin(realAngle) * s.dist;
+      // Rotate around Y axis
+      const cos = Math.cos(time + star.angle);
+      const sin = Math.sin(time + star.angle);
       
-      // Perspective
-      const scale = 400 / (400 + z);
-      const alpha = scale * 0.8; // Fade back
+      // 3D projection
+      let x = star.baseX * cos - star.baseZ * sin;
+      let z = star.baseZ * cos + star.baseX * sin;
       
-      ctx.fillStyle = s.color;
-      ctx.globalAlpha = alpha;
+      // Perspective scale
+      const scale = 300 / (300 + z + 200); // Simple perspective
+      const screenX = cx + x * scale;
+      const screenY = star.y * scale; // Also scale Y for perspective height
+
+      // Mouse Repulsion (2D approximation)
+      const dx = screenX - mouse.x;
+      const dy = screenY - mouse.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
       
-      // Draw
+      if(dist < 100) {
+        const force = (100 - dist) / 100;
+        star.vx += (dx/dist) * force * 5;
+        star.vy += (dy/dist) * force * 5;
+      }
+
+      // Physics Return
+      star.vx *= 0.9;
+      star.vy *= 0.9;
+      star.vx -= (star.vx) * 0.1; 
+      star.vy -= (star.vy) * 0.1; // Damping
+
+      const drawX = screenX + star.vx;
+      const drawY = screenY + star.vy;
+      const drawSize = Math.max(0.1, star.size * scale);
+
+      // Draw based on depth (Z)
+      ctx.fillStyle = star.color;
+      ctx.globalAlpha = scale; // Fade distant stars
       ctx.beginPath();
-      ctx.arc(center + x * scale, s.y * scale, s.size * scale, 0, Math.PI*2);
+      ctx.arc(drawX, drawY, drawSize, 0, Math.PI*2);
       ctx.fill();
     });
     ctx.globalAlpha = 1;
 
-    // Draw Floating Wishes
-    ctx.font = "bold 20px 'Mountains of Christmas'";
-    ctx.textAlign = "center";
-    for(let i = wishes.length - 1; i >= 0; i--) {
-      let w = wishes[i];
-      w.y += w.vy;
-      w.life -= 0.01;
-      
-      if(w.life <= 0) { wishes.splice(i, 1); continue; }
-      
-      ctx.fillStyle = w.color;
-      ctx.globalAlpha = w.life;
-      ctx.fillText(w.text, w.x, w.y);
-      ctx.globalAlpha = 1;
-    }
-
     requestAnimationFrame(animate);
   }
-  
-  resize();
   animate();
+
+  // 6. Falling Snow (DOM for performance on mobile)
+  const snowContainer = document.getElementById('snowContainer');
+  function addSnowflake() {
+    const el = document.createElement('div');
+    el.className = 'snowflake';
+    el.style.left = Math.random() * 100 + '%';
+    el.style.width = el.style.height = (Math.random() * 4 + 2) + 'px';
+    el.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    el.style.opacity = Math.random();
+    
+    snowContainer.appendChild(el);
+    setTimeout(() => el.remove(), 5000);
+  }
+  setInterval(addSnowflake, 200);
+
 </script>
 </body>
 </html>
