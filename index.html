@@ -11,151 +11,175 @@
     margin: 0;
     padding: 0;
   }
-
+  
   html {
     scroll-behavior: smooth;
     scroll-snap-type: y mandatory;
-    height: 100%;
     overflow-y: scroll;
   }
-
+  
   body {
     font-family: 'Inter', sans-serif;
     background: #0a0a0a;
     color: white;
     overflow-x: hidden;
-    margin: 0;
   }
-
-  /* Custom Scrollbar for nicer look */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #0a0a0a; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-
+  
   section {
+    min-height: 100vh;
     height: 100vh;
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 20px;
+    padding: 80px 20px;
     position: relative;
     scroll-snap-align: start;
     scroll-snap-stop: always;
-    overflow: hidden; /* Prevents overflow from animations */
   }
-
+  
   .text {
     max-width: 800px;
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 500;
     line-height: 1.4;
-    z-index: 2;
-    pointer-events: none; /* Allows clicking through text */
   }
-
+  
   .text span {
     display: inline-block;
     opacity: 0;
-    transform: translateY(60px) rotateX(-90deg);
+    transform: translateY(100px) rotateX(-90deg);
     filter: blur(10px);
     transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform, opacity, filter;
   }
-
+  
   .text.active span {
     opacity: 1;
     transform: translateY(0) rotateX(0deg);
     filter: blur(0);
   }
-
-  /* Emoji Section */
+  
   .emoji-section {
     font-size: clamp(8rem, 20vw, 15rem);
     opacity: 0;
-    transform: scale(0.5) rotate(-180deg);
+    transform: scale(0) rotate(-180deg);
     transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform, opacity;
   }
+  
   .emoji-section.active {
     opacity: 1;
     transform: scale(1) rotate(0deg);
   }
-
-  /* Tree Section */
+  
   #treeSection {
     background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 70%);
     position: relative;
+    overflow: hidden;
   }
-
+  
   .tree-hint {
     position: absolute;
-    bottom: 10%;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
-    color: rgba(255, 215, 0, 0.6);
-    font-size: 1rem;
+    color: rgba(255, 215, 0, 0.8);
+    font-size: 1.2rem;
     font-weight: 300;
-    letter-spacing: 1px;
+    text-align: center;
+    z-index: 10;
+    animation: hintFade 3s ease-in-out infinite;
     pointer-events: none;
-    animation: pulse 2s infinite;
   }
-
-  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-
+  
+  @keyframes hintFade {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  
   canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
-    /* Important: allows scrolling on mobile UNLESS touching tree directly */
-    touch-action: pan-y; 
+    cursor: none;
+    touch-action: none;
   }
-
-  /* Custom Cursor */
+  
   .cursor {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    mix-blend-mode: difference;
-    transition: transform 0.1s;
+    transition: all 0.15s ease;
+    will-change: transform;
   }
-
-  .cursor::after {
-    content: '';
+  
+  .cursor::before {
+    content: '⭐';
+    font-size: 24px;
     position: absolute;
-    top: 50%; left: 50%;
-    width: 100%; height: 100%;
-    background: rgba(255, 215, 0, 0.8);
-    border-radius: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 1)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+    animation: starPulse 1.5s ease-in-out infinite;
   }
-
-  .cursor.active { transform: scale(2.5); }
+  
+  .cursor.active::before {
+    font-size: 32px;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 1)) drop-shadow(0 0 60px rgba(255, 100, 0, 0.8));
+    animation: starPulse 0.5s ease-in-out infinite;
+  }
+  
+  @keyframes starPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
+  }
+  
+  .final-message {
+    background: #0a0a0a;
+    position: relative;
+  }
   
   .final-message::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.03) 0%, transparent 60%);
-    animation: glow 5s infinite alternate;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(46, 125, 50, 0.05) 0%, transparent 50%);
+    animation: bgShift 10s ease-in-out infinite;
   }
-  @keyframes glow { from { opacity: 0.5; } to { opacity: 1; } }
-
-  /* Snow Effect */
-  .snow-container {
+  
+  @keyframes bgShift {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  
+  .controls {
+    display: none;
+  }
+  
+  .control-btn {
+    display: none;
+  }
+  
+  .snow-overlay {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: 9999;
   }
+  
   .snowflake {
     position: absolute;
     background: white;
@@ -163,19 +187,38 @@
     opacity: 0.8;
     animation: fall linear forwards;
   }
+  
   @keyframes fall {
-    to { transform: translateY(105vh); }
+    to {
+      transform: translateY(100vh) translateX(var(--drift));
+      opacity: 0;
+    }
   }
-
-  @media (hover: none) {
-    .cursor { display: none; }
+  
+  @media (pointer: coarse) {
+    canvas {
+      cursor: default;
+    }
+    
+    .cursor {
+      display: none;
+    }
+    
+    .text {
+      font-size: clamp(1.5rem, 5vw, 3rem);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .text {
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+    }
   }
 </style>
 </head>
 <body>
-
 <div class="cursor"></div>
-<div class="snow-container" id="snowContainer"></div>
+<div class="snow-overlay" id="snowOverlay"></div>
 
 <section>
   <div class="text" data-text="Hey"></div>
@@ -190,28 +233,25 @@
 </section>
 
 <section>
-  <div class="emoji-section text">😊</div>
-</section>
-
-<section>
   <div class="text" data-text="Keep scrolling...|something magical awaits"></div>
 </section>
 
 <section id="treeSection">
   <canvas id="treeCanvas"></canvas>
-  <div class="tree-hint">Tap or hover to interact ✨</div>
+  <div class="tree-hint">Click anywhere for fireworks</div>
 </section>
 
 <section class="final-message">
-  <div class="text" data-text="Merry Christmas 🎄❤️||May your holidays sparkle with joy"></div>
+  <div class="text" data-text="Merry Christmas❤️||May your holidays sparkle with joy" style="position: relative; z-index: 1;"></div>
 </section>
 
 <script>
-  // 1. Mobile Detection & Config
+  // Performance optimizations
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  const STAR_COUNT = isMobile ? 300 : 600; 
-
-  // 2. Text Split & Reveal Logic
+  const STAR_COUNT = isMobile ? 300 : 500;
+  const PARTICLE_LIMIT = isMobile ? 50 : 100;
+  
+  // Split text into characters
   document.querySelectorAll('.text[data-text]').forEach(el => {
     const text = el.getAttribute('data-text');
     const lines = text.split('|');
@@ -224,234 +264,345 @@
       chars.forEach((char, i) => {
         const span = document.createElement('span');
         span.textContent = char === ' ' ? '\u00A0' : char;
-        // Stagger delay calculation
-        span.style.transitionDelay = `${(lineIndex * 10 + i) * 0.04}s`;
+        span.style.transitionDelay = `${(lineIndex * chars.length + i) * 0.025}s`;
         el.appendChild(span);
       });
     });
   });
-
-  // 3. Scroll Observer (REMOVED THE BUGGY SCROLL LOCK)
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-      } else {
-        entry.target.classList.remove('active');
-      }
-    });
-  }, { threshold: 0.4 });
-
-  document.querySelectorAll('.text, .emoji-section').forEach(el => observer.observe(el));
-
-  // 4. Custom Cursor
+  
+  // Custom cursor
   const cursor = document.querySelector('.cursor');
-  let mouseX = -100, mouseY = -100;
-  let cursorX = -100, cursorY = -100;
-
-  document.addEventListener('mousemove', e => {
+  let mouseX = 0, mouseY = 0;
+  let cursorX = 0, cursorY = 0;
+  let isOverTree = false;
+  
+  document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   });
-
-  function updateCursor() {
-    // Smooth Lerp
+  
+  function animateCursor() {
     cursorX += (mouseX - cursorX) * 0.2;
     cursorY += (mouseY - cursorY) * 0.2;
-    cursor.style.left = `${cursorX}px`;
-    cursor.style.top = `${cursorY}px`;
-    requestAnimationFrame(updateCursor);
+    cursor.style.left = cursorX + 'px';
+    cursor.style.top = cursorY + 'px';
+    requestAnimationFrame(animateCursor);
   }
-  if (!isMobile) updateCursor();
-
-  // 5. Canvas Tree Animation
+  if (!isMobile) animateCursor();
+  
+  // Intersection Observer
+  const observerOptions = {
+    threshold: 0.5,
+    rootMargin: '0px'
+  };
+  
+  let scrollLockTimeout;
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+        if (!entry.target.classList.contains('active')) {
+          entry.target.classList.add('active');
+          
+          // Temporary scroll lock
+          document.body.style.overflow = 'hidden';
+          clearTimeout(scrollLockTimeout);
+          scrollLockTimeout = setTimeout(() => {
+            document.body.style.overflow = '';
+          }, 1000);
+        }
+      }
+    });
+  }, observerOptions);
+  
+  document.querySelectorAll('.text, .emoji-section').forEach(el => observer.observe(el));
+  
+  // Christmas Tree Canvas - Optimized
   const canvas = document.getElementById('treeCanvas');
-  const ctx = canvas.getContext('2d'); // Removed alpha:false to let gradient show
+  const ctx = canvas.getContext('2d', { alpha: false });
+  
   let stars = [];
-  let particles = [];
-  let w, h;
   let mouse = { x: -1000, y: -1000 };
-
-  function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
+  let particles = [];
+  let animationId;
+  
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(dpr, dpr);
     initStars();
   }
-  window.addEventListener('resize', resize);
-  setTimeout(resize, 100); // Initial call
-
+  
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  
   function initStars() {
     stars = [];
-    const treeH = Math.min(h * 0.8, 600);
-    const treeW = treeH * 0.6;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const treeHeight = Math.min(window.innerHeight * 0.8, 650);
+    const treeWidth = treeHeight * 0.85;
     
-    for(let i=0; i<STAR_COUNT; i++) {
+    // Create 3D spinning tree with cylindrical coordinates
+    for (let i = 0; i < STAR_COUNT; i++) {
       const progress = i / STAR_COUNT;
-      const y = (h/2 - treeH/2) + progress * treeH;
-      const radiusAtY = progress * treeW;
+      const y = centerY - treeHeight / 2 + progress * treeHeight;
+      const radiusAtY = (progress * treeWidth) / 2;
       
-      // Cylindrical coordinates for 3D effect
-      const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * radiusAtY;
+      // Random angle around the tree (360 degrees)
+      const theta = Math.random() * Math.PI * 2;
+      const radius = Math.random() * radiusAtY;
+      
+      // Convert cylindrical to 2D projection
+      const x = centerX + Math.cos(theta) * radius;
+      const z = Math.sin(theta) * radius; // depth in 3D space
       
       stars.push({
-        baseX: Math.cos(angle) * dist, // Relative to center
-        baseZ: Math.sin(angle) * dist, // Depth
-        y: y,
-        angle: angle,
-        speed: 0.005 + Math.random() * 0.01,
-        color: `hsl(${40 + Math.random()*20}, 100%, ${60 + Math.random()*40}%)`,
-        size: 0.5 + Math.random() * 2,
-        
-        // Physics vars
-        x: 0, z: 0, 
-        vx: 0, vy: 0, vz: 0
+        x, y,
+        baseX: x,
+        baseY: y,
+        baseZ: z,
+        baseRadius: radius,
+        baseTheta: theta,
+        angle: Math.random() * Math.PI * 2,
+        orbitRadius: 25 + Math.random() * 15,
+        speed: 0.002 + Math.random() * 0.003,
+        radius: 1.2 + Math.random() * 2,
+        hue: 40 + Math.random() * 20,
+        brightness: 0.7 + Math.random() * 0.3,
+        vx: 0, vy: 0,
+        ovx: 0, ovy: 0,
+        rotationAngle: 0
       });
     }
     
-    // Top Star
+    // Top star
     stars.push({
+      x: centerX,
+      y: centerY - treeHeight / 2 - 35,
+      baseX: centerX,
+      baseY: centerY - treeHeight / 2 - 35,
+      baseZ: 0,
+      baseRadius: 0,
+      baseTheta: 0,
+      angle: 0,
+      orbitRadius: 0,
+      speed: 0.008,
+      radius: 9,
+      hue: 50,
+      brightness: 1,
       isTop: true,
-      x: 0, y: (h/2 - treeH/2) - 15, z: 0,
-      baseX: 0, baseZ: 0,
-      angle: 0, speed: 0,
-      color: '#ffd700', size: 10
+      vx: 0, vy: 0,
+      ovx: 0, ovy: 0,
+      rotationAngle: 0
     });
   }
-
-  // Interaction Handler
-  function handleInput(x, y) {
-    const rect = canvas.getBoundingClientRect();
-    mouse.x = x - rect.left;
-    mouse.y = y - rect.top;
+  
+  function createExplosion(x, y, count = 25) {
+    if (particles.length > PARTICLE_LIMIT) return;
     
-    cursor.classList.add('active');
-    
-    // Create sparkles on movement
-    if(Math.random() > 0.8) createSparkle(mouse.x, mouse.y);
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count;
+      const velocity = 3 + Math.random() * 3;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * velocity,
+        vy: Math.sin(angle) * velocity,
+        life: 1,
+        hue: Math.random() * 360,
+        size: 2 + Math.random() * 3
+      });
+    }
   }
-
-  canvas.addEventListener('mousemove', e => handleInput(e.clientX, e.clientY));
-  canvas.addEventListener('touchmove', e => {
-    // e.preventDefault(); // Uncomment if you want to block scrolling while touching tree
-    handleInput(e.touches[0].clientX, e.touches[0].clientY);
-  }, {passive: false});
-
+  
+  // Mouse/Touch handlers
+  function handleInteraction(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = clientX - rect.left;
+    mouse.y = clientY - rect.top;
+    
+    stars.forEach(star => {
+      const dx = star.x - mouse.x;
+      const dy = star.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const orbitRadius = 180;
+      
+      if (dist < orbitRadius && dist > 15) {
+        const tangentX = -dy / dist;
+        const tangentY = dx / dist;
+        const force = (1 - dist / orbitRadius);
+        
+        star.ovx = tangentX * force * 7;
+        star.ovy = tangentY * force * 7;
+        star.vx += (dx / dist) * force * 2.5;
+        star.vy += (dy / dist) * force * 2.5;
+      } else {
+        star.ovx *= 0.94;
+        star.ovy *= 0.94;
+      }
+    });
+  }
+  
+  canvas.addEventListener('mousemove', (e) => {
+    handleInteraction(e.clientX, e.clientY);
+    isOverTree = true;
+    cursor.classList.add('active');
+  });
+  
   canvas.addEventListener('mouseleave', () => {
-    mouse.x = -1000;
+    mouse = { x: -1000, y: -1000 };
+    isOverTree = false;
     cursor.classList.remove('active');
   });
-
-  function createSparkle(x, y) {
-    particles.push({
-      x, y,
-      vx: (Math.random()-0.5) * 4,
-      vy: (Math.random()-0.5) * 4,
-      life: 1,
-      color: `hsl(${Math.random()*360}, 100%, 70%)`
-    });
-  }
-
-  function animate() {
-    // Clear rect to keep transparency for CSS background
-    ctx.clearRect(0, 0, w, h);
+  
+  canvas.addEventListener('click', (e) => {
+    createExplosion(e.clientX - canvas.getBoundingClientRect().left, e.clientY - canvas.getBoundingClientRect().top, 30);
+  });
+  
+  // Touch support
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleInteraction(touch.clientX, touch.clientY);
+  }, { passive: false });
+  
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleInteraction(touch.clientX, touch.clientY);
+  }, { passive: false });
+  
+  canvas.addEventListener('touchend', () => {
+    mouse = { x: -1000, y: -1000 };
+    const rect = canvas.getBoundingClientRect();
+    createExplosion(rect.width / 2, rect.height / 2, 20);
+  });
+  
+  // Optimized draw loop
+  let lastTime = 0;
+  const targetFPS = 60;
+  const frameDelay = 1000 / targetFPS;
+  
+  function drawStars(currentTime) {
+    if (currentTime - lastTime < frameDelay) {
+      animationId = requestAnimationFrame(drawStars);
+      return;
+    }
+    lastTime = currentTime;
     
-    const cx = w/2;
-    // Rotate entire tree slowly
-    const time = Date.now() * 0.0005;
-
-    // 1. Draw Sparkles
-    for(let i=particles.length-1; i>=0; i--) {
+    // Clear with background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    
+    // Update particles
+    for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.life -= 0.03;
-      if(p.life <= 0) { particles.splice(i, 1); continue; }
+      p.vy += 0.2;
+      p.life -= 0.018;
+      
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
       
       ctx.beginPath();
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.life;
-      ctx.arc(p.x, p.y, 2 * p.life, 0, Math.PI*2);
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${p.hue}, 100%, 60%, ${p.life})`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${p.life * 0.8})`;
       ctx.fill();
     }
-    ctx.globalAlpha = 1;
-
-    // 2. Draw Stars (Pseudo 3D)
-    stars.forEach(star => {
-      if(star.isTop) {
-        // Draw top star simply
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = 'gold';
-        ctx.fillStyle = star.color;
-        ctx.beginPath();
-        ctx.arc(cx, star.y, star.size, 0, Math.PI*2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        return;
-      }
-
-      // Rotate around Y axis
-      const cos = Math.cos(time + star.angle);
-      const sin = Math.sin(time + star.angle);
-      
-      // 3D projection
-      let x = star.baseX * cos - star.baseZ * sin;
-      let z = star.baseZ * cos + star.baseX * sin;
-      
-      // Perspective scale
-      const scale = 300 / (300 + z + 200); // Simple perspective
-      const screenX = cx + x * scale;
-      const screenY = star.y * scale; // Also scale Y for perspective height
-
-      // Mouse Repulsion (2D approximation)
-      const dx = screenX - mouse.x;
-      const dy = screenY - mouse.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      
-      if(dist < 100) {
-        const force = (100 - dist) / 100;
-        star.vx += (dx/dist) * force * 5;
-        star.vy += (dy/dist) * force * 5;
-      }
-
-      // Physics Return
-      star.vx *= 0.9;
-      star.vy *= 0.9;
-      star.vx -= (star.vx) * 0.1; 
-      star.vy -= (star.vy) * 0.1; // Damping
-
-      const drawX = screenX + star.vx;
-      const drawY = screenY + star.vy;
-      const drawSize = Math.max(0.1, star.size * scale);
-
-      // Draw based on depth (Z)
-      ctx.fillStyle = star.color;
-      ctx.globalAlpha = scale; // Fade distant stars
-      ctx.beginPath();
-      ctx.arc(drawX, drawY, drawSize, 0, Math.PI*2);
-      ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  // 6. Falling Snow (DOM for performance on mobile)
-  const snowContainer = document.getElementById('snowContainer');
-  function addSnowflake() {
-    const el = document.createElement('div');
-    el.className = 'snowflake';
-    el.style.left = Math.random() * 100 + '%';
-    el.style.width = el.style.height = (Math.random() * 4 + 2) + 'px';
-    el.style.animationDuration = (Math.random() * 3 + 2) + 's';
-    el.style.opacity = Math.random();
+    ctx.shadowBlur = 0;
     
-    snowContainer.appendChild(el);
-    setTimeout(() => el.remove(), 5000);
+    // Draw stars with 3D rotation and depth sorting
+    const centerX = window.innerWidth / 2;
+    const globalRotation = Date.now() * 0.0003; // Slow continuous rotation
+    
+    // Update star positions with 3D rotation
+    stars.forEach(star => {
+      if (!star.isTop) {
+        star.rotationAngle = star.baseTheta + globalRotation;
+        
+        // Convert back to 2D with rotation
+        const rotatedX = Math.cos(star.rotationAngle) * star.baseRadius;
+        const rotatedZ = Math.sin(star.rotationAngle) * star.baseRadius;
+        
+        // Calculate depth-based scale (stars further back are smaller)
+        const depthScale = 0.5 + (rotatedZ / (window.innerHeight * 0.4) + 1) * 0.25;
+        
+        star.baseX = centerX + rotatedX;
+        star.currentDepth = rotatedZ;
+        star.depthScale = depthScale;
+      }
+    });
+    
+    // Sort by depth (back to front)
+    const sortedStars = [...stars].sort((a, b) => (a.currentDepth || 0) - (b.currentDepth || 0));
+    
+    sortedStars.forEach(star => {
+      star.angle += star.speed;
+      const orbitX = Math.cos(star.angle) * star.orbitRadius;
+      const orbitY = Math.sin(star.angle) * star.orbitRadius * 0.3;
+      
+      const targetX = star.baseX + orbitX;
+      const targetY = star.baseY + orbitY;
+      
+      star.x += star.ovx + star.vx;
+      star.y += star.ovy + star.vy;
+      
+      star.vx += (targetX - star.x) * 0.02;
+      star.vy += (targetY - star.y) * 0.02;
+      star.vx *= 0.88;
+      star.vy *= 0.88;
+      
+      ctx.beginPath();
+      const finalRadius = star.radius * (star.depthScale || 1);
+      ctx.arc(star.x, star.y, finalRadius, 0, Math.PI * 2);
+      
+      if (star.isTop) {
+        const pulse = Math.sin(Date.now() * 0.004) * 0.3 + 0.7;
+        ctx.fillStyle = `hsla(50, 100%, ${75 * pulse}%, ${pulse})`;
+        ctx.shadowBlur = 40 * pulse;
+        ctx.shadowColor = 'rgba(255, 215, 0, 1)';
+      } else {
+        const depthAlpha = 0.5 + (star.depthScale || 1) * 0.5;
+        ctx.fillStyle = `hsla(${star.hue}, 100%, ${50 + star.brightness * 25}%, ${depthAlpha})`;
+        ctx.shadowBlur = (6 + finalRadius) * (star.depthScale || 1);
+        ctx.shadowColor = `hsla(${star.hue}, 100%, 60%, ${0.4 * (star.depthScale || 1)})`;
+      }
+      
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+    
+    animationId = requestAnimationFrame(drawStars);
   }
-  setInterval(addSnowflake, 200);
-
+  
+  drawStars(0);
+  
+  // Perpetual snow
+  function createSnow() {
+    const snowflake = document.createElement('div');
+    snowflake.className = 'snowflake';
+    const size = 3 + Math.random() * 5;
+    snowflake.style.width = size + 'px';
+    snowflake.style.height = size + 'px';
+    snowflake.style.left = Math.random() * 100 + '%';
+    snowflake.style.setProperty('--drift', (Math.random() - 0.5) * 100 + 'px');
+    snowflake.style.animationDuration = (3 + Math.random() * 4) + 's';
+    
+    document.getElementById('snowOverlay').appendChild(snowflake);
+    
+    setTimeout(() => snowflake.remove(), 7000);
+  }
+  
+  // Start perpetual snow
+  setInterval(createSnow, 150);
 </script>
 </body>
 </html>
